@@ -4,8 +4,8 @@ create table user (
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
     name TEXT NOT NULL,
-    phoneNumber TEXT NOT NULL  ,
-    email varchar(50) NOT NULL,
+    phoneNumber TEXT UNIQUE NOT NULL  ,
+    email varchar(50) UNIQUE NOT NULL,
     address TEXT NOT NULL,
     password TEXT NOT NULL,
     
