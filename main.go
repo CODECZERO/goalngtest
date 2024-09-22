@@ -6,27 +6,27 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/CODECZERO/goalngtest/internal/db"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
-	"github.com/CODECZERO/goalngtest/db"
 	_ "github.com/lib/pq"
 )
 
 type apiConfig struct {
-	DB *database.Queries
+	DB *db.Queries
 }
 
 func main() {
 	godotenv.Load() //takes env from file
 	//get's port number from env
 	port := os.Getenv("PORT")
-	if port == "" { //checks if it's empty if it's then log error
+	if port == " " { //checks if it's empty if it's then log error
 		log.Fatal("port number is missing")
 	}
 	//get's database url env
 	dburl := os.Getenv("DBURL")
-	if dburl == "" { //checks if it's empty if it's then log error
+	if dburl == " " { //checks if it's empty if it's then log error
 		log.Fatal("port number is missing")
 	}
 
@@ -35,13 +35,13 @@ func main() {
 		log.Fatal("something went wrong while connection to database", err)
 	}
 
-	queris, err := database.New(conn)
+	dbQueris := db.New(conn)
 	if err != nil {
 		log.Fatal("something went wrong while runing query in database", err)
 	}
 
 	apiCfg := apiConfig{
-		DB: database.New(conn),
+		DB: dbQueris,
 	}
 
 	router := chi.NewRouter() //create router for go lang using chi router
@@ -57,7 +57,8 @@ func main() {
 
 	v1router := chi.NewRouter()     //main router or backend url router
 	v1router.Get("/healt", handler) //allows get methode to check wheater app is running or not
-	v1router.Post("/user", apiCfg.handlerUser)
+	v1router.Post("/user", apiCfg.HandlerUser)
+	v1router.Get("/user",apiCfg.HandlerGetUser)
 
 	router.Mount("/v1", v1router) //is main url of /healt or /v1/healt
 
@@ -66,5 +67,6 @@ func main() {
 		Addr:    ":" + port,
 	}
 
-	server.ListenAndServe() //starting server at given port
+	log.Printf("Serving on port: %s\n", port)
+	log.Fatal(server.ListenAndServe()) //starting server at given port
 }

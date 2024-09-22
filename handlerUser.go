@@ -3,18 +3,21 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
 	"net/http"
 	"time"
+
+	"github.com/CODECZERO/goalngtest/internal/auth"
+	"github.com/CODECZERO/goalngtest/internal/db"
+	"github.com/google/uuid"
 )
 
-func (apiCnf *apiConfig) handlerUser(w http.ResponseWriter, r *http.Request) {
-	type parameters struct {//parameters for the data
-		name        string    `json:"name"`
-		phoneNumber string    `json:"phoneNumber"`
-		email       string    `json:"email"`
-		address     string    `json:"address"`
-		password    string    `json:"password"`
+func (apiCnf *apiConfig) HandlerUser(w http.ResponseWriter, r *http.Request) {
+	type parameters struct { //parameters for the data
+		Name        string `json:"name"`
+		PhoneNumber string `json:"phoneNumber"`
+		Email       string `json:"email"`
+		Address     string `json:"address"`
+		Password    string `json:"password"`
 	}
 
 	decoder := json.NewDecoder(r.Body)
@@ -26,15 +29,15 @@ func (apiCnf *apiConfig) handlerUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := apiCnf.DB.CreateUser(r.Context(), database.CreateUserParams{
-		user_id:    uuid.New(),
-		created_at: time.Now().UTC(),
-		updated_at: time.Now().UTC(),
-		name:params.name,
-		phoneNumber:params.phoneNumber,
-		email:params.email,
-		address:params.address,
-		password:params.password,
+	user, err := apiCnf.DB.CreateUser(r.Context(), db.CreateUserParams{
+		ID:          uuid.New(),
+		CreatedAt:   time.Now().UTC(),
+		UpdatedAt:   time.Now().UTC(),
+		Name:        params.Name,
+		Phonenumber: params.PhoneNumber,
+		Email:       params.Email,
+		Address:     params.Address,
+		Password:    params.Password,
 		//write db parameters here
 	})
 
@@ -43,7 +46,24 @@ func (apiCnf *apiConfig) handlerUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responseWithJson(w, 200, databaseUserToUser(user)) // here this function will return value in json to client
+	responseWithJson(w, 201, databaseUserToUser(user)) // here this function will return value in json to client
 	//the databaseUserToUser function is used to only send limit data to clinet because the data may consited of many filed
+}
+
+func (apiCfg *apiConfig) HandlerGetUser(w http.ResponseWriter, r *http.Request) {
+	apikey, err := auth.GetApiKey(r.Header)
+
+	if err != nil {
+		responseWithJson(w, 403, fmt.Sprint("Auth error:%v", err))
+		return
+	}
+	user,err:=apiCfg.DB.GetUser(r.Context(),apikey)
+	
+	if err!=nil{
+		responseWithJson(w, 404, fmt.Sprint("user not found:%v", err))
+		return
+	}
+
+	responseWithJson(w,200,databaseUserToUser(user));
 
 }
