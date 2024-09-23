@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/CODECZERO/goalngtest/internal/auth"
 	"github.com/CODECZERO/goalngtest/internal/db"
 	"github.com/google/uuid"
 )
@@ -50,19 +49,7 @@ func (apiCnf *apiConfig) HandlerUser(w http.ResponseWriter, r *http.Request) {
 	//the databaseUserToUser function is used to only send limit data to clinet because the data may consited of many filed
 }
 
-func (apiCfg *apiConfig) HandlerGetUser(w http.ResponseWriter, r *http.Request) {
-	apikey, err := auth.GetApiKey(r.Header)
-
-	if err != nil {
-		responseWithJson(w, 403, fmt.Sprint("Auth error:%v", err))
-		return
-	}
-	user,err:=apiCfg.DB.GetUser(r.Context(),apikey)
-	
-	if err!=nil{
-		responseWithJson(w, 404, fmt.Sprint("user not found:%v", err))
-		return
-	}
+func (apiCfg *apiConfig) HandlerGetUser(w http.ResponseWriter, r *http.Request, user db.User) {
 
 	responseWithJson(w,200,databaseUserToUser(user));
 

@@ -8,7 +8,6 @@ CREATE TABLE users (
     email VARCHAR(50) UNIQUE NOT NULL,
     address TEXT NOT NULL,
     password TEXT NOT NULL
-    
- );
+)
 -- +goose Down
 DROP TABLE user;

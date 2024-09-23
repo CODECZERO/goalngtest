@@ -8,10 +8,10 @@ INSERT INTO users(
     email,
     address,
     password,
-    api_key
+    ApiKey
 )
-VALUES ($1,$2,$3,$4,$5,$6,$7,$8,encode(sha256(random()::text::bytea),"hex"))
+VALUES ($1,$2,$3,$4,$5,$6,$7,$8,encode(sha256(random()::text::bytea),'hex'))
 RETURNING *;
 
 -- name: GetUser :one
-SELECT * FROM users WHERE api_key = $1;
+SELECT * FROM users WHERE ApiKey = $1;
