@@ -62,6 +62,11 @@ func main() {
 	v1router.Post("/feed", apiCfg.middleware(apiCfg.handlerCreateFeed))
 	v1router.Get("/feed", apiCfg.handlerGetFeeds)
 
+	v1router.Get("/feedFollower",apiCfg.middleware((apiCfg.handlerFeedFollowsGet)))
+	v1router.Post("feedFollower",apiCfg.middleware(apiCfg.handlerCreateFeed))
+	v1router.Delete("/feedFollower",apiCfg.middleware(apiCfg.handlerDeleteFollwer))
+	
+
 	router.Mount("/v1", v1router) //is main url of /healt or /v1/healt
 
 	server := &http.Server{ //making server
