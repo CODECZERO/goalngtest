@@ -1,8 +1,8 @@
 package main
 
 import (
-	"net/http"
 	"fmt"
+	"net/http"
 
 	"github.com/CODECZERO/goalngtest/internal/auth"
 	"github.com/CODECZERO/goalngtest/internal/db"
@@ -25,6 +25,6 @@ func (apiConfig *apiConfig) middleware(handler authHeader) http.HandlerFunc {
 			return
 		}
 
-		handler(w,r,user)
+		handler(w, r, user)
 	}
 }

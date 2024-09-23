@@ -58,7 +58,9 @@ func main() {
 	v1router := chi.NewRouter()     //main router or backend url router
 	v1router.Get("/healt", handler) //allows get methode to check wheater app is running or not
 	v1router.Post("/user", apiCfg.HandlerUser)
-	v1router.Get("/user",apiCfg.middleware(apiCfg.HandlerGetUser))
+	v1router.Get("/user", apiCfg.middleware(apiCfg.HandlerGetUser))
+	v1router.Post("/feed", apiCfg.middleware(apiCfg.handlerCreateFeed))
+	v1router.Get("/feed", apiCfg.handlerGetFeeds)
 
 	router.Mount("/v1", v1router) //is main url of /healt or /v1/healt
 
