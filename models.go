@@ -87,3 +87,10 @@ func databaseFeedFollowsToFeedFollows(feedFollows []db.FeedFollow) []FeedFollow 
 	return result
 }
 
+func nullTimeToTimePte(t sql.Nulltime) *time.Time{
+	if t.Valid{
+		return &t.Time
+	}
+	return nil
+}
+
